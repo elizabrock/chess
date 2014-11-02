@@ -1,6 +1,7 @@
 $(function(){
   // TODO: Multiple Chess Sets
 
+  var $spaces = $("table#chess td");
   var $selected_piece;
 
   $('.piece').click(function(event){
@@ -16,11 +17,11 @@ $(function(){
   function resetValidMoves(){
     // Reset previous valid moves.
     $('.selected').removeClass('selected');
-    $("table#chess td").data('validmove', 'no');
-    $("table#chess td").removeClass('possible_move','impossible_move');
+    $spaces.data('validmove', 'no');
+    $spaces.removeClass('possible_move impossible_move');
   }
 
-  $('table#chess td').click(function(){
+  $spaces.click(function(){
     var $space = $(this);
     moveTo($selected_piece, $space);
     $selected_piece = null;
@@ -66,17 +67,45 @@ $(function(){
     return !$space.find('.piece').length;
   }
 
+  var exists = function($space){
+    return true;
+    // return !!$space;
+  }
+
+  var maximum_move_distances = [-8, -7, -6, -5, -4, -3, -2, -1,
+                                1, 2, 3, 4, 5, 6, 7, 8];
   function showQueenMoves($queen){
     // Movement Rules:
-    // Can move any number of spaces in any direction (TODO)
+    // Can move any number of spaces in any direction
+    _.each(maximum_move_distances, function(distance){
+      var x = distance;
+      var y = distance;
+      markMoveValidIf(spaceRelativeTo($queen, x, y), exists);
+      markMoveValidIf(spaceRelativeTo($queen, x, -y), exists);
+    });
     // No jumping (TODO)
     // Capture Rules:
     // Standard (TODO)
+    // combination_seeds = [-8, -7, -6, -5, -4, -3, -2, -1, 0];
+    // _.each(combination_seeds, function(x){
+    //   _.each(combination_seeds, function(y){
+    //     markMoveValidIf(spaceRelativeTo($queen, x, y), exists);
+    //   });
+    // });
   }
 
   function showKingMoves($king){
     // Movement Rules:
-    // Can move one space in any direction (TODO)
+    // Can move one space in any direction
+    valid_combinations = [
+      [-1, 1],  [0, 1],  [1, 1],
+      [-1, 0],           [1, 0],
+      [-1, -1], [0, -1], [1, -1]];
+    _.each(valid_combinations, function(combination){
+      var x = combination[0];
+      var y = combination[1];
+      markMoveValidIf(spaceRelativeTo($king, x, y), exists);
+    });
     // Castling: :( (TODO)
     // Capture Rules:
     // Standard (TODO)
@@ -84,7 +113,13 @@ $(function(){
 
   function showRookMoves($rook){
     // Movement Rules:
-    // Can move any number of spaces in the cardinal directions (TODO)
+    // Can move any number of spaces in the cardinal directions
+    _.each(maximum_move_distances, function(distance){
+      var x = distance;
+      var y = distance;
+      markMoveValidIf(spaceRelativeTo($rook, x, 0), exists);
+      markMoveValidIf(spaceRelativeTo($rook, 0, y), exists);
+    });
     // No jumping (TODO)
     // Capture Rules:
     // Standard (TODO)
@@ -92,7 +127,13 @@ $(function(){
 
   function showBishopMoves($bishop){
     // Movement Rules:
-    // Can move any number of spaces in the diagonal directions (TODO)
+    // Can move any number of spaces in the diagonal directions
+    _.each(maximum_move_distances, function(distance){
+      var x = distance;
+      var y = distance;
+      markMoveValidIf(spaceRelativeTo($bishop, x, y), exists);
+      markMoveValidIf(spaceRelativeTo($bishop, x, -y), exists);
+    });
     // No jumping (TODO)
     // Capture Rules:
     // Standard (TODO)
@@ -100,7 +141,19 @@ $(function(){
 
   function showKnightMoves($knight){
     // Movement Rules:
-    // Can move to any square that is either two spaces x and one space y away, or is one space x away and two spaces y away (TODO)
+    // Can move to any square that is either two spaces x and one space y away, or is one space x away and two spaces away
+    valid_combinations = [
+      [-2, -1], [-2, 1],
+      [-1, -2], [-1, 2],
+      [1, -2],  [1, 2],
+      [2, -1],  [2, 1]
+    ];
+    _.each(valid_combinations, function(combination){
+      var x = combination[0];
+      var y = combination[1];
+      markMoveValidIf(spaceRelativeTo($knight, x, y), exists);
+    });
+
     // Jumping is encouraged (TODO)
     // Capture Rules:
     // Standard (TODO)
