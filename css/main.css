@@ -1,0 +1,40 @@
+
+table#chess {
+  border-collapse: collapse;
+  font-size: 200%;
+}
+
+table#chess tbody td {
+  border: 1px solid black;
+}
+
+table#chess td, table#chess th {
+  height: 1.25em;
+  width: 1.25em;
+  text-align: center;
+  vertical-align: center;
+}
+
+table#chess tr:nth-child(odd) td:nth-child(even),
+table#chess tr:nth-child(even) td:nth-child(odd)
+{
+  background-color: #ccc;
+}
+
+.piece {
+  color: black;
+}
+
+*[data-player='white'][data-piece='queen']:before  { content: '\2654'; }
+*[data-player='white'][data-piece='king']:before   { content: '\2655'; }
+*[data-player='white'][data-piece='rook']:before   { content: '\2656'; }
+*[data-player='white'][data-piece='bishop']:before { content: '\2657'; }
+*[data-player='white'][data-piece='knight']:before { content: '\2658'; }
+*[data-player='white'][data-piece='pawn']:before   { content: '\2659'; }
+
+*[data-player='black'][data-piece='queen']:before  { content: '\265A'; }
+*[data-player='black'][data-piece='king']:before   { content: '\265B'; }
+*[data-player='black'][data-piece='rook']:before   { content: '\265C'; }
+*[data-player='black'][data-piece='bishop']:before { content: '\265D'; }
+*[data-player='black'][data-piece='knight']:before { content: '\265E'; }
+*[data-player='black'][data-piece='pawn']:before   { content: '\265F'; }

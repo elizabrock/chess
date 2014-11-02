@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chess</title>
+    <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body>
+    <div class="container">
+        <h1>Chess</h1>
+        <table id="chess">
+          <tbody>
+            <tr>
+              <th>8</th>
+              <td><span class="piece" data-piece="rook" data-player="black"></span></td>
+              <td><span class="piece" data-piece="knight" data-player="black"></span></td>
+              <td><span class="piece" data-piece="bishop" data-player="black"></span></td>
+              <td><span class="piece" data-piece="king" data-player="black"></span></td>
+              <td><span class="piece" data-piece="queen" data-player="black"></span></td>
+              <td><span class="piece" data-piece="bishop" data-player="black"></span></td>
+              <td><span class="piece" data-piece="knight" data-player="black"></span></td>
+              <td><span class="piece" data-piece="rook" data-player="black"></span></td>
+            </tr>
+            <tr>
+              <th>7</th>
+              <td><span class="piece" data-piece="pawn" data-player="black"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="black"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="black"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="black"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="black"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="black"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="black"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="black"></span></td>
+            </tr>
+            <tr>
+              <th>6</th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>5</th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>4</th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>3</th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>2</th>
+              <td><span class="piece" data-piece="pawn" data-player="white"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="white"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="white"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="white"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="white"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="white"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="white"></span></td>
+              <td><span class="piece" data-piece="pawn" data-player="white"></span></td>
+            </tr>
+            <tr>
+              <th>1</th>
+              <td><span class="piece" data-piece="rook" data-player="white"></span></td>
+              <td><span class="piece" data-piece="knight" data-player="white"></span></td>
+              <td><span class="piece" data-piece="bishop" data-player="white"></span></td>
+              <td><span class="piece" data-piece="king" data-player="white"></span></td>
+              <td><span class="piece" data-piece="queen" data-player="white"></span></td>
+              <td><span class="piece" data-piece="bishop" data-player="white"></span></td>
+              <td><span class="piece" data-piece="knight" data-player="white"></span></td>
+              <td><span class="piece" data-piece="rook" data-player="white"></span></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th></th>
+              <th>a</th>
+              <th>b</th>
+              <th>c</th>
+              <th>d</th>
+              <th>e</th>
+              <th>f</th>
+              <th>g</th>
+              <th>h</th>
+            </tr>
+          </tfoot>
+        </table>
+    </div>
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
