@@ -47,11 +47,11 @@ table#chess tr:nth-child(even) td:nth-child(odd)
   border: 2px solid red;
 }
 
-td.impossible_move {
+td.impossible {
   /* Using !important temporarily.  In general, this is bad! */
   background-color: red !important;
 }
-td.possible_move {
+td.possible {
   /* Using !important temporarily.  In general, this is bad! */
   background-color: green !important;
 }
