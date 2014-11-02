@@ -1,26 +1,96 @@
 $(function(){
 
-  $('.piece').click(function(){
-    var $piece = $(this)
-    select($piece);
-    showValidMovesFor($piece);
+  var $selected_piece;
+
+  $('.piece').click(function(event){
+    $selected_piece = $(this);
+    resetValidMoves();
+    select($selected_piece);
+    showValidMovesFor($selected_piece);
+    // Prevent triggering the click handler for moving a piece:
+    event.stopPropagation();
   });
 
-  function select($piece){
+  function resetValidMoves(){
+    // Reset previous valid moves.
     $('.selected').removeClass('selected');
+    $("table#chess td").data('validmove', 'no');
+    $("table#chess td").removeClass('possible_move','impossible_move');
+  }
+
+  $('table#chess td').click(function(){
+    var $space = $(this);
+    moveTo($selected_piece, $space);
+    $selected_piece = null;
+  });
+
+  function moveTo($piece, $space){
+    $space.append($piece);
+    resetValidMoves();
+  }
+
+  function select($piece){
     $piece.addClass('selected');
   }
 
   function showValidMovesFor($piece){
-    // Reset previous valid moves.
-    $("table#chess td").data('validmove', 'no');
-    $("table#chess td").removeClass('possible_move','impossible_move');
-
     // Apply the appropriate rules to determine valid moves:
-    if( $piece.data('piece') === 'pawn' ){
-      showPawnMoves($piece);
+    switch($piece.data('piece')){
+      case 'queen':
+        showQueenMoves($piece);
+        break;
+      case 'king':
+        showKingMoves($piece);
+        break;
+      case 'rook':
+        showRookMoves($piece);
+        break;
+      case 'bishop':
+        showBishopMoves($piece);
+        break;
+      case 'knight':
+        showKnightMoves($piece);
+        break;
+      case 'pawn':
+        showPawnMoves($piece);
+        break;
     }
   }
+
+  var isUnoccupied = function($space){
+    return !$space.find('.piece').length;
+  }
+
+  function showQueenMoves($queen){}
+  function showKingMoves($king){}
+  function showRookMoves($rook){}
+  function showBishopMoves($bishop){}
+  function showKnightMoves($knight){}
+
+  function showPawnMoves($pawn){
+    // Movement Rules:
+    // * Can move one square forward, to an unoccupied square (TODO)
+    markMoveValidIf(spaceRelativeTo($pawn, 0, 1), isUnoccupied);
+    // * On first move, it can move two squares forward, if both are unoccupied (TODO)
+
+    // Capture Rules:
+    //  * Captures diagonally forward (TODO)
+    //  * En passant (TODO)
+  }
+
+  // Calling this predicateFunction is redundant,
+  // but I want to be super clear about what this is.
+  function markMoveValidIf($space, predicateFunction){
+    if(predicateFunction($space)){
+      $space.data('validmove', 'possible');
+      $space.addClass('possible_move');
+    } else {
+      $space.data('validmove', 'impossible');
+      $space.addClass('impossible_move');
+    }
+  }
+
+
 
   function spaceRelativeTo($piece, forwardx, forwardy){
     // Eliza's Movement Traversal Philosophy:
@@ -70,32 +140,5 @@ $(function(){
     }
     var $correctRow = $(neighbors[y-1]); // 0 indexed, so we have to offset
     return $($correctRow.find('td')[$currentSpace.prevAll().length - 1]);
-  }
-
-  var isUnoccupied = function($space){
-    return !$space.find('.piece').length;
-  }
-
-  function showPawnMoves($pawn){
-    // Movement Rules:
-    // * Can move one square forward, to an unoccupied square (TODO)
-    markMoveValidIf(spaceRelativeTo($pawn, 0, 1), isUnoccupied);
-    // * On first move, it can move two squares forward, if both are unoccupied (TODO)
-
-    // Capture Rules:
-    //  * Captures diagonally forward (TODO)
-    //  * En passant (TODO)
-  }
-
-  // Calling this predicateFunction is redundant,
-  // but I want to be super clear about what this is.
-  function markMoveValidIf($space, predicateFunction){
-    if(predicateFunction($space)){
-      $space.data('validmove', 'possible');
-      $space.addClass('possible_move');
-    } else {
-      $space.data('validmove', 'impossible');
-      $space.addClass('impossible_move');
-    }
   }
 });
