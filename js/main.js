@@ -1,8 +1,10 @@
 $(function(){
+  // TODO: Multiple Chess Sets
 
   var $selected_piece;
 
   $('.piece').click(function(event){
+    // TODO: Track player turns and reflect the next player in the UI.
     $selected_piece = $(this);
     resetValidMoves();
     select($selected_piece);
@@ -25,6 +27,9 @@ $(function(){
   });
 
   function moveTo($piece, $space){
+    // TODO: Enforce movement rules
+    // TODO: Capture of pieces
+    // TODO: Check and Checkmate
     $space.append($piece);
     resetValidMoves();
   }
@@ -61,17 +66,52 @@ $(function(){
     return !$space.find('.piece').length;
   }
 
-  function showQueenMoves($queen){}
-  function showKingMoves($king){}
-  function showRookMoves($rook){}
-  function showBishopMoves($bishop){}
-  function showKnightMoves($knight){}
+  function showQueenMoves($queen){
+    // Movement Rules:
+    // Can move any number of spaces in any direction (TODO)
+    // No jumping (TODO)
+    // Capture Rules:
+    // Standard (TODO)
+  }
+
+  function showKingMoves($king){
+    // Movement Rules:
+    // Can move one space in any direction (TODO)
+    // Castling: :( (TODO)
+    // Capture Rules:
+    // Standard (TODO)
+  }
+
+  function showRookMoves($rook){
+    // Movement Rules:
+    // Can move any number of spaces in the cardinal directions (TODO)
+    // No jumping (TODO)
+    // Capture Rules:
+    // Standard (TODO)
+  }
+
+  function showBishopMoves($bishop){
+    // Movement Rules:
+    // Can move any number of spaces in the diagonal directions (TODO)
+    // No jumping (TODO)
+    // Capture Rules:
+    // Standard (TODO)
+  }
+
+  function showKnightMoves($knight){
+    // Movement Rules:
+    // Can move to any square that is either two spaces x and one space y away, or is one space x away and two spaces y away (TODO)
+    // Jumping is encouraged (TODO)
+    // Capture Rules:
+    // Standard (TODO)
+  }
 
   function showPawnMoves($pawn){
     // Movement Rules:
     // * Can move one square forward, to an unoccupied square (TODO)
     markMoveValidIf(spaceRelativeTo($pawn, 0, 1), isUnoccupied);
     // * On first move, it can move two squares forward, if both are unoccupied (TODO)
+    // No jumping (TODO)
 
     // Capture Rules:
     //  * Captures diagonally forward (TODO)
@@ -89,8 +129,6 @@ $(function(){
       $space.addClass('impossible_move');
     }
   }
-
-
 
   function spaceRelativeTo($piece, forwardx, forwardy){
     // Eliza's Movement Traversal Philosophy:
