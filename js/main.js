@@ -1,5 +1,6 @@
 $(function(){
   // TODO: Multiple Chess Sets
+  // TODO: Player cannot make a move that puts their king in check
   // TODO: Check and Checkmate
 
   var $spaces = $("table#chess td");
@@ -30,6 +31,7 @@ $(function(){
       return false;
     }
     if(moveTo($selected_piece, $piece.closest('td'))){
+      // TODO: Move the rook along with the king, when castling
       $piece.off('click');
       $captureBox.append($piece);
       return true;
@@ -180,7 +182,6 @@ $(function(){
   }
 
   function showKingMoves($king){
-    // TODO: Castling: :(
     // Can move one space in any direction
     valid_combinations = [
       [-1, 1],  [0, 1],  [1, 1],
@@ -191,6 +192,19 @@ $(function(){
       var y = combination[1];
       markMoveValidIf(spaceRelativeTo($king, x, y), isNotMyPiece);
     });
+    // Castling
+    // TODO: The King can't pass through a square that is under attack.
+    // TODO: The king may not castle into check, out of check, or through check.
+    var $rook = spaceRelativeTo($king, 3, 0).find(".piece[data-piece='rook']");
+    var inBetweenSpaces = [spaceRelativeTo($king, 1, 0) , spaceRelativeTo($king, 2, 0)];
+    if(hasNotMoved($king) && hasNotMoved($rook) && _.all(inBetweenSpaces, isUnoccupied)){
+      markMoveValidIf(spaceRelativeTo($king, 2, 0), isUnoccupied);
+    }
+    var $rook = spaceRelativeTo($king, -4, 0).find(".piece[data-piece='rook']");
+    var inBetweenSpaces = [spaceRelativeTo($king, -1, 0) , spaceRelativeTo($king, -2, 0) , spaceRelativeTo($king, -3, 0)];
+    if(hasNotMoved($king) && hasNotMoved($rook) && _.all(inBetweenSpaces, isUnoccupied)){
+      markMoveValidIf(spaceRelativeTo($king, -3, 0), isUnoccupied);
+    }
   }
 
   function showRookMoves($rook){
