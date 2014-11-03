@@ -1,57 +1,87 @@
+section#content {
+  min-width: 800px;
+  max-width: 800px;
+  margin: 20px;
+}
+
+section#content > section {
+  float: left;
+}
+
+section.board {
+  width: 60%;
+}
+
+section.information {
+  width: 40%;
+}
+
+section.information > section {
+  margin: 0 1em 1em 1em;
+}
 
 table#chess {
   border-collapse: collapse;
-  font-size: 200%;
+  vertical-align: middle;
+  font-size: 48px;
 }
 
-table#chess tbody td {
+table#chess td {
   border: 1px solid black;
 }
 
 table#chess td, table#chess th {
-  height: 1.25em;
-  width: 1.25em;
+  width: 54px;
+  height: 54px;
+  line-height: 48px;
   text-align: center;
-  vertical-align: center;
 }
 
+/* TODO: this coloring is wrong */
 table#chess tr:nth-child(odd) td:nth-child(even),
 table#chess tr:nth-child(even) td:nth-child(odd)
 {
   background-color: #ccc;
 }
 
-/* http://www.enpassant.dk/chess/fonteng.htm */
-/* http://chess.stackexchange.com/questions/6272/chess-set-icons?newreg=c0c56bf3245847d8b4814d2bfebc6eb1 */
-/* http://en.wikipedia.org/wiki/Chess_symbols_in_Unicode */
-/* http://www.evotech.net/articles/testjsentities.html */
-*[data-player='white'][data-piece='queen']:before  { content: '\2654'; }
-*[data-player='white'][data-piece='king']:before   { content: '\2655'; }
-*[data-player='white'][data-piece='rook']:before   { content: '\2656'; }
-*[data-player='white'][data-piece='bishop']:before { content: '\2657'; }
-*[data-player='white'][data-piece='knight']:before { content: '\2658'; }
-*[data-player='white'][data-piece='pawn']:before   { content: '\2659'; }
-
-*[data-player='black'][data-piece='queen']:before  { content: '\265A'; }
-*[data-player='black'][data-piece='king']:before   { content: '\265B'; }
-*[data-player='black'][data-piece='rook']:before   { content: '\265C'; }
-*[data-player='black'][data-piece='bishop']:before { content: '\265D'; }
-*[data-player='black'][data-piece='knight']:before { content: '\265E'; }
-*[data-player='black'][data-piece='pawn']:before   { content: '\265F'; }
+table#chess td.impossible {
+  /* Using !important temporarily.  In general, this is bad! */
+  background-color: red !important;
+}
+table#chess td.possible {
+  /* Using !important temporarily.  In general, this is bad! */
+  background-color: green !important;
+}
 
 .piece {
   color: black;
 }
 
-.piece.selected {
+.piece:after {
+  display: block;
+  width: 54px;
+  height: 54px;
+}
+
+.piece.selected:after {
+  display: block;
   border: 2px solid red;
 }
 
-td.impossible {
-  /* Using !important temporarily.  In general, this is bad! */
-  background-color: red !important;
-}
-td.possible {
-  /* Using !important temporarily.  In general, this is bad! */
-  background-color: green !important;
-}
+/* http://www.enpassant.dk/chess/fonteng.htm */
+/* http://chess.stackexchange.com/questions/6272/chess-set-icons?newreg=c0c56bf3245847d8b4814d2bfebc6eb1 */
+/* http://en.wikipedia.org/wiki/Chess_symbols_in_Unicode */
+/* http://www.evotech.net/articles/testjsentities.html */
+*[data-player='white'][data-piece='queen']:after  { content: '\2654'; }
+*[data-player='white'][data-piece='king']:after   { content: '\2655'; }
+*[data-player='white'][data-piece='rook']:after   { content: '\2656'; }
+*[data-player='white'][data-piece='bishop']:after { content: '\2657'; }
+*[data-player='white'][data-piece='knight']:after { content: '\2658'; }
+*[data-player='white'][data-piece='pawn']:after   { content: '\2659'; }
+
+*[data-player='black'][data-piece='queen']:after  { content: '\265A'; }
+*[data-player='black'][data-piece='king']:after   { content: '\265B'; }
+*[data-player='black'][data-piece='rook']:after   { content: '\265C'; }
+*[data-player='black'][data-piece='bishop']:after { content: '\265D'; }
+*[data-player='black'][data-piece='knight']:after { content: '\265E'; }
+*[data-player='black'][data-piece='pawn']:after   { content: '\265F'; }

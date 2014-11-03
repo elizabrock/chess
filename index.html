@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Chess</title>
+    <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
-    <div class="container">
-        <h1>Chess</h1>
+    <section id="content">
+      <section class="board">
         <table id="chess">
           <tbody>
             <tr>
@@ -115,7 +115,19 @@
             </tr>
           </tfoot>
         </table>
-    </div>
+      </section>
+      <section class="information">
+        <section class="status">
+          <h2>Current Player: ??</h2>
+        </section>
+        <section class="rules">
+          <h2>Implemented Rules</h2>
+          <ul>
+          </ul>
+          <p><a href="http://www.chess.com/learn-how-to-play-chess">Learn How to Play Chess</a></p>
+        </section>
+      </section>
+    </section>
     <script src="js/jquery-2.1.1.js"></script>
     <script src="js/lodash-2.4.1.js"></script>
     <script src="js/main.js"></script>
