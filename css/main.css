@@ -1,3 +1,8 @@
+ul, ol {
+  list-style-position: inside;
+  margin: 1em 0;
+}
+
 section#content {
   min-width: 800px;
   max-width: 800px;
@@ -37,9 +42,8 @@ table#chess td, table#chess th {
   text-align: center;
 }
 
-/* TODO: this coloring is wrong */
-table#chess tr:nth-child(odd) td:nth-child(even),
-table#chess tr:nth-child(even) td:nth-child(odd)
+table#chess tr:nth-child(odd) td:nth-child(odd),
+table#chess tr:nth-child(even) td:nth-child(even)
 {
   background-color: #ccc;
 }
