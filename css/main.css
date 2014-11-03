@@ -3,6 +3,10 @@ ul, ol {
   margin: 1em 0;
 }
 
+#captured .piece {
+  float: left;
+}
+
 section#content {
   min-width: 800px;
   max-width: 800px;
@@ -25,7 +29,7 @@ section.information > section {
   margin: 0 1em 1em 1em;
 }
 
-table#chess {
+table#chess, .piece {
   border-collapse: collapse;
   vertical-align: middle;
   font-size: 48px;

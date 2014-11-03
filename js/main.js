@@ -3,44 +3,65 @@ $(function(){
   // TODO: Check and Checkmate
 
   var $spaces = $("table#chess td");
+  var $captureBox = $("#captured");
   var $selected_piece;
 
-  $('.piece').click(function(event){
+  $('.piece').on('click', function(event){
     // TODO: Track player turns and reflect the next player in the UI.
-    // TODO: Capture of pieces
-    $selected_piece = $(this);
-    resetValidMoves();
-    select($selected_piece);
-    showValidMovesFor($selected_piece);
     // Prevent triggering the click handler for moving a piece:
     event.stopPropagation();
+    var $this_piece = $(this);
+    capture($this_piece) || select($this_piece);
   });
 
-  function resetValidMoves(){
-    // Reset previous valid moves.
-    $('.selected').removeClass('selected');
-    $spaces.data('validmove', 'no');
-    $spaces.removeClass('possible impossible');
-  }
-
-  $spaces.click(function(){
+  $spaces.on('click', function(){
+    if(!$selected_piece){
+      return;
+    }
     var $space = $(this);
     moveTo($selected_piece, $space);
     $selected_piece = null;
   });
 
+  function capture($piece){
+    if(!$selected_piece || $selected_piece === $piece){
+      return false;
+    }
+    if(moveTo($selected_piece, $piece.closest('td'))){
+      $piece.off('click');
+      $captureBox.append($piece);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function moveTo($piece, $space){
     // Only allow movement to a valid space
     if($space.data('validmove') !== 'possible'){
-      return;
+      return false;
     }
     $piece.attr('hasmoved', 'true');
     $space.append($piece);
     resetValidMoves();
+    return true;
   }
 
   function select($piece){
+    resetValidMoves();
+    $selected_piece = $piece;
+    showValidMovesFor($piece);
     $piece.addClass('selected');
+  }
+
+  function resetValidMoves(){
+    // Reset previous valid moves.
+    if(!!$selected_piece){
+      $selected_piece.removeClass('selected');
+    }
+    $selected_piece = null;
+    $spaces.data('validmove', 'no');
+    $spaces.removeClass('possible impossible');
   }
 
   function showValidMovesFor($piece){
