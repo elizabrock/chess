@@ -4,6 +4,8 @@ $(function(){
 
   var $spaces = $("table#chess td");
   var $captureBox = $("#captured");
+  var $lastPieceMoved;
+  // TODO: Rename this:
   var $selected_piece;
 
   $('.piece').on('click', function(event){
@@ -41,9 +43,12 @@ $(function(){
     if($space.data('validmove') !== 'possible'){
       return false;
     }
-    $piece.attr('hasmoved', 'true');
+    var moveNumber = $piece.attr('hasmoved') || 0;
+    $piece.attr('hasmoved', moveNumber + 1);
     $space.append($piece);
+    $lastPieceMoved = $piece;
     resetValidMoves();
+    // TODO: Promotion for pawns
     return true;
   }
 
@@ -94,7 +99,7 @@ $(function(){
   }
 
   var hasNotMoved = function($piece){
-    return $piece.attr('hasmoved') !== 'true'
+    return !($piece.attr('hasmoved') >= 1)
   }
 
   var isEnemySpace = function($space){
@@ -109,6 +114,15 @@ $(function(){
   var isNotMyPiece = function($space){
     //TODO: I've hardcoded black and white here.
     return !$space.find(".piece[data-player='white']").length;
+  }
+
+  var isEnemyPawnThatHasMovedOnce = function($space){
+    //TODO: I've hardcoded black and white here.
+    var $pawn = $space.find(".piece[data-piece='pawn'][data-player='black']");
+    var justMoved = $pawn.is($lastPieceMoved);
+    var wasFirstMove = $pawn.attr('hasmoved') === "1";
+    // debugger;
+    return !!$pawn && justMoved && wasFirstMove;
   }
 
   var maximum_move_distances = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -222,7 +236,16 @@ $(function(){
         markMoveValidIf(spaceRelativeTo($pawn, x, y), isEnemySpace);
       }
     });
-    // TODO: En passant
+
+    // En passant
+    valid_combinations = [[-1, 0], [1, 0]];
+    _.each(valid_combinations, function(combination){
+      var x = combination[0];
+      var y = combination[1];
+      // TODO: This falsely allows the capture of pawns that moved one space,
+      // when it should only work for pawns that moved two spaces.
+      markMoveValidIf(spaceRelativeTo($pawn, x, y), isEnemyPawnThatHasMovedOnce);
+    });
   }
 
   // Calling this predicateFunction is redundant,
