@@ -88,6 +88,15 @@ $(function(){
     }
   }
 
+  var cannotMovePast = function($space, $piece){
+    var pieceInPlay = $space.find(".piece").length;
+    return !!pieceInPlay;
+  }
+
+  var hasNotMoved = function($piece){
+    return $piece.attr('hasmoved') !== 'true'
+  }
+
   var isUnoccupied = function($space){
     return !$space.find('.piece').length;
   }
@@ -192,19 +201,14 @@ $(function(){
 
   function showPawnMoves($pawn){
     // Can move one square forward, to an unoccupied square
-    markMoveValidIf(spaceRelativeTo($pawn, 0, 1), isUnoccupied);
-    // On the first move, only,
-    if($pawn.attr('hasmoved') !== 'true'){
-      // the can move two squares forward, if both are unoccupied
+    var oneSpaceForward = spaceRelativeTo($pawn, 0, 1);
+    markMoveValidIf(oneSpaceForward, isUnoccupied);
+    // On the first move only, the pawn can move two squares forward, if both are unoccupied
+    if(hasNotMoved($pawn) && isUnoccupied(oneSpaceForward)){
       markMoveValidIf(spaceRelativeTo($pawn, 0, 2), isUnoccupied);
     }
     // TODO: En passant
     // TODO: Capture diagonally, forward
-  }
-
-  function cannotMovePast($space, $piece){
-    var pieceInPlay = $space.find(".piece").length;
-    return !!pieceInPlay;
   }
 
   // Calling this predicateFunction is redundant,
