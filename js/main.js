@@ -97,6 +97,11 @@ $(function(){
     return $piece.attr('hasmoved') !== 'true'
   }
 
+  var isEnemySpace = function($space){
+    //TODO: I've hardcoded black and white here.
+    return !!$space.find(".piece[data-player='black']").length;
+  }
+
   var isUnoccupied = function($space){
     return !$space.find('.piece').length;
   }
@@ -207,8 +212,17 @@ $(function(){
     if(hasNotMoved($pawn) && isUnoccupied(oneSpaceForward)){
       markMoveValidIf(spaceRelativeTo($pawn, 0, 2), isUnoccupied);
     }
+    // Pawns capture forward diagonally
+    valid_combinations = [[-1, 1], [1, 1]];
+    _.each(valid_combinations, function(combination){
+      var x = combination[0];
+      var y = combination[1];
+      var $space = spaceRelativeTo($pawn, x, y);
+      if(isEnemySpace($space)){
+        markMoveValidIf(spaceRelativeTo($pawn, x, y), isEnemySpace);
+      }
+    });
     // TODO: En passant
-    // TODO: Capture diagonally, forward
   }
 
   // Calling this predicateFunction is redundant,
