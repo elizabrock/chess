@@ -1,9 +1,30 @@
+#piece-promotion {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  border: 2px solid black;
+  background: white;
+  padding: 1em;
+}
+
+#underlay {
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: none;
+  position: fixed;
+  background-color: rgba(50,50,50,0.5);
+  z-index: 9;
+}
+
 ul, ol {
   list-style-position: inside;
   margin: 1em 0;
 }
 
-#captured .piece {
+#piece-promotion .piece, #captured .piece {
   float: left;
 }
 

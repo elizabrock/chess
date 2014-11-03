@@ -131,6 +131,7 @@
             <li>The pawn may move forward to the unoccupied square immediately in front of it on the same file without capturing, or on its first move it may advance two squares along the same file without capturing;</li>
             <li>or the pawn may capture an opponent's piece on a square diagonally in front of it on an adjacent file, by moving to that square.</li>
             <li>En passant: When a player moves a pawn 2 squares then on the very next move, the other player moves their pawn diagonally forward 1 square to the square that pawn moved through, capturing it in the process.</li>
+            <li>Promotion: If the pawn reaches the edge of the enemy's board, it gets promoted to the piece of the player's choice.</li>
             <li>The lower left corner is always white.</li>
           </ol>
           <p><a href="http://en.wikipedia.org/wiki/Chess">Rules sourced from Wikipedia.</a></p>
@@ -140,7 +141,20 @@
 
         </section>
       </section>
-    </section>
+      <div id="underlay">
+        <div id="piece-promotion">
+          <h2>Promotion! Choose a new rank for your pawn:</h2>
+          <span class="piece" data-piece="rook" data-player="black"></span>
+          <span class="piece" data-piece="knight" data-player="black"></span>
+          <span class="piece" data-piece="bishop" data-player="black"></span>
+          <span class="piece" data-piece="queen" data-player="black"></span>
+          <span class="piece" data-piece="king" data-player="black"></span>
+          <span class="piece" data-piece="bishop" data-player="black"></span>
+          <span class="piece" data-piece="knight" data-player="black"></span>
+          <span class="piece" data-piece="rook" data-player="black"></span>
+        </div>
+      </div>
+      </section>
     <script src="js/jquery-2.1.1.js"></script>
     <script src="js/lodash-2.4.1.js"></script>
     <script src="js/main.js"></script>

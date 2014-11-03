@@ -5,6 +5,7 @@ $(function(){
 
   var $spaces = $("table#chess td");
   var $captureBox = $("#captured");
+  var $pieceChooser = $('#piece-promotion');
   var $lastPieceMoved;
   // TODO: Rename this:
   var $selected_piece;
@@ -42,7 +43,7 @@ $(function(){
 
   function moveTo($piece, $space){
     // Only allow movement to a valid space
-    if($space.data('validmove') !== 'possible'){
+    if($space.attr('data-validmove') !== 'possible'){
       return false;
     }
     var moveNumber = $piece.attr('hasmoved') || 0;
@@ -50,8 +51,25 @@ $(function(){
     $space.append($piece);
     $lastPieceMoved = $piece;
     resetValidMoves();
-    // TODO: Promotion for pawns
+    promoteIfNecessary($piece);
     return true;
+  }
+
+  function promoteIfNecessary($piece){
+    // If the piece is a pawn and there are no more spaces in front of it.
+    if($piece.attr('data-piece') === 'pawn' && !spaceRelativeTo($piece, 0, 1).length){
+      var piecePosition = $piece[0].getBoundingClientRect();
+      $("#underlay").show();
+      $pieceChooser.css({top: (piecePosition.bottom - 24), left: (piecePosition.right - 24)});
+      var $pieces = $pieceChooser.find('.piece')
+      $pieces.on('click', function(){
+        $pieces.off('click');
+        var $newPiece = $(this);
+        $piece.attr('data-piece', $newPiece.data('piece'));
+        $pieceChooser.css({bottom: 0, left: 0})
+        $("#underlay").hide();
+      });
+    }
   }
 
   function select($piece){
@@ -67,13 +85,13 @@ $(function(){
       $selected_piece.removeClass('selected');
     }
     $selected_piece = null;
-    $spaces.data('validmove', 'no');
+    $spaces.attr('data-validmove', 'no');
     $spaces.removeClass('possible impossible');
   }
 
   function showValidMovesFor($piece){
     // Apply the appropriate rules to determine valid moves:
-    switch($piece.data('piece')){
+    switch($piece.attr('data-piece')){
       case 'queen':
         showQueenMoves($piece);
         break;
@@ -266,10 +284,10 @@ $(function(){
   // but I want to be super clear about what this is.
   function markMoveValidIf($space, predicateFunction){
     if(predicateFunction($space)){
-      $space.data('validmove', 'possible');
+      $space.attr('data-validmove', 'possible');
       $space.addClass('possible');
     } else {
-      $space.data('validmove', 'impossible');
+      $space.attr('data-validmove', 'impossible');
       $space.addClass('impossible');
     }
   }
