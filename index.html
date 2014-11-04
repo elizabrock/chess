@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Chess</title>
     <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
@@ -120,8 +121,37 @@
         <section class="status">
           <h2>Current Player: ??</h2>
         </section>
+        <section>
+          <h2>Chess Set:</h2>
+          <select id="set-picker" name="chess-set">
+            <!-- Other potential fonts:
+                 Code2000, Droid Sans Fallback, Everson Mono, Free Serif, Quivira, Segoe, Symbola -->
+            <option value="arial" selected="selected">Standard</option>
+            <option value="caslonroman">caslonroman</option>
+            <option value="Chrysanthi-Unicode-Regular">Chrysanthi</option>
+            <option value="dejavu_sansbold">Deja Vu Sans</option>
+            <option value="pecitabook">Pecita</option>
+          </select>
+        </section>
+        <section id="captured">
+          <h2>Captured Pieces:</h2>
+        </section>
+      </section>
+      <div id="underlay">
+        <section id="piece-promotion">
+          <h2>Promotion! Choose a new rank for your pawn:</h2>
+          <span class="piece" data-piece="rook" data-player="black"></span>
+          <span class="piece" data-piece="knight" data-player="black"></span>
+          <span class="piece" data-piece="bishop" data-player="black"></span>
+          <span class="piece" data-piece="queen" data-player="black"></span>
+          <span class="piece" data-piece="king" data-player="black"></span>
+          <span class="piece" data-piece="bishop" data-player="black"></span>
+          <span class="piece" data-piece="knight" data-player="black"></span>
+          <span class="piece" data-piece="rook" data-player="black"></span>
+        </section>
+      </div>
         <section class="rules">
-          <h2>Implemented Rules</h2>
+          <h2>Implemented Rules:</h2>
           <ol>
             <li>The king moves one square in any direction.</li>
             <li>The rook can move any number of squares along any rank or file.</li>
@@ -137,23 +167,6 @@
           <p><a href="http://en.wikipedia.org/wiki/Chess">Rules sourced from Wikipedia.</a></p>
           <p><a href="http://www.chess.com/learn-how-to-play-chess">Learn How to Play Chess</a></p>
         </section>
-        <section id="captured">
-
-        </section>
-      </section>
-      <div id="underlay">
-        <div id="piece-promotion">
-          <h2>Promotion! Choose a new rank for your pawn:</h2>
-          <span class="piece" data-piece="rook" data-player="black"></span>
-          <span class="piece" data-piece="knight" data-player="black"></span>
-          <span class="piece" data-piece="bishop" data-player="black"></span>
-          <span class="piece" data-piece="queen" data-player="black"></span>
-          <span class="piece" data-piece="king" data-player="black"></span>
-          <span class="piece" data-piece="bishop" data-player="black"></span>
-          <span class="piece" data-piece="knight" data-player="black"></span>
-          <span class="piece" data-piece="rook" data-player="black"></span>
-        </div>
-      </div>
       </section>
     <script src="js/jquery-2.1.1.js"></script>
     <script src="js/lodash-2.4.1.js"></script>

@@ -1,5 +1,4 @@
 $(function(){
-  // TODO: Multiple Chess Sets
   // TODO: Player cannot make a move that puts their king in check
   // TODO: Check and Checkmate
 
@@ -9,6 +8,12 @@ $(function(){
   var $lastPieceMoved;
   // TODO: Rename this:
   var $selected_piece;
+
+  // Chess Set Picker
+  // TODO: Remember the choosen chess set ;)
+  $("#set-picker").on('change', function(){
+    $spaces.css('font-family', this.value);
+  });
 
   $('.piece').on('click', function(event){
     // TODO: Track player turns and reflect the next player in the UI.
@@ -141,7 +146,6 @@ $(function(){
     var $pawn = $space.find(".piece[data-piece='pawn'][data-player='black']");
     var justMoved = $pawn.is($lastPieceMoved);
     var wasFirstMove = $pawn.attr('hasmoved') === "1";
-    // debugger;
     return !!$pawn && justMoved && wasFirstMove;
   }
 

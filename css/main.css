@@ -46,6 +46,11 @@ section.information {
   width: 40%;
 }
 
+section.rules {
+  width: 100%;
+  padding: 1em;
+}
+
 section.information > section {
   margin: 0 1em 1em 1em;
 }
