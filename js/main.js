@@ -1,21 +1,23 @@
 $(function(){
   // TODO: Player cannot make a move that puts their king in check
   // TODO: Check and Checkmate
+  // TODO: (In Class) Animate piece movement
 
-  var $spaces = $("table#chess td");
+  var currentPlayer = 'white';
   var $captureBox = $("#captured");
-  var $pieceChooser = $('#piece-promotion');
+  var $currentPlayerSpan = $("#current-player");
   var $lastPieceMoved;
+  var $pieceChooser = $('#piece-promotion');
   var $selectedPiece;
+  var $spaces = $("table#chess td");
 
   // Chess Set Picker
-  // TODO: Remember the choosen chess set ;)
+  // TODO: Remember the chosen chess set ;)
   $("#set-picker").on('change', function(){
     $spaces.css('font-family', this.value);
   });
 
   $('.piece').on('click', function(event){
-    // TODO: Track player turns and reflect the next player in the UI.
     // Prevent triggering the click handler for moving a piece:
     event.stopPropagation();
     var $this_piece = $(this);
@@ -36,7 +38,6 @@ $(function(){
       return false;
     }
     if(moveTo($selectedPiece, $piece.closest('td'))){
-      // TODO: Move the rook along with the king, when castling
       $piece.off('click');
       $captureBox.append($piece);
       return true;
@@ -46,6 +47,7 @@ $(function(){
   }
 
   function moveTo($piece, $space){
+      // TODO: Move the rook along with the king, when castling
     // Only allow movement to a valid space
     if($space.attr('data-validmove') !== 'possible'){
       return false;
@@ -56,6 +58,7 @@ $(function(){
     $lastPieceMoved = $piece;
     resetValidMoves();
     promoteIfNecessary($piece);
+    switchPlayer();
     return true;
   }
 
@@ -77,10 +80,17 @@ $(function(){
   }
 
   function select($piece){
-    resetValidMoves();
-    $selectedPiece = $piece;
-    showValidMovesFor($piece);
-    $piece.addClass('selected');
+    if(currentPlayer === $piece.attr('data-player')){
+      resetValidMoves();
+      $selectedPiece = $piece;
+      showValidMovesFor($piece);
+      $piece.addClass('selected');
+    }
+  }
+
+  function switchPlayer(){
+    currentPlayer = (currentPlayer === 'white') ? 'black' : 'white';
+    $currentPlayerSpan.text(currentPlayer);
   }
 
   function resetValidMoves(){
@@ -122,13 +132,16 @@ $(function(){
     return !!pieceInPlay;
   }
 
+  function enemyPlayer(){
+    return (currentPlayer === 'white')? 'black' : 'white';
+  }
+
   var hasNotMoved = function($piece){
     return !($piece.attr('hasmoved') >= 1)
   }
 
   var isEnemySpace = function($space){
-    //TODO: I've hardcoded black and white here.
-    return !!$space.find(".piece[data-player='black']").length;
+    return !!$space.find(".piece[data-player='"+enemyPlayer()+"']").length;
   }
 
   var isUnoccupied = function($space){
@@ -136,13 +149,11 @@ $(function(){
   }
 
   var isNotMyPiece = function($space){
-    //TODO: I've hardcoded black and white here.
-    return !$space.find(".piece[data-player='white']").length;
+    return !$space.find(".piece[data-player='"+currentPlayer+"']").length;
   }
 
   var isEnemyPawnThatHasMovedOnce = function($space){
-    //TODO: I've hardcoded black and white here.
-    var $pawn = $space.find(".piece[data-piece='pawn'][data-player='black']");
+    var $pawn = $space.find(".piece[data-piece='pawn'][data-player='"+enemyPlayer()+"']");
     var justMoved = $pawn.is($lastPieceMoved);
     var wasFirstMove = $pawn.attr('hasmoved') === "1";
     return !!$pawn && justMoved && wasFirstMove;
