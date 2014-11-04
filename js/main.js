@@ -12,7 +12,7 @@ $(function(){
   var $spaces = $("table#chess td");
 
   // Chess Set Picker
-  // TODO: Remember the chosen chess set ;)
+  // TODO: (In Class) Remember the chosen chess set ;)
   $("#set-picker").on('change', function(){
     $spaces.css('font-family', this.value);
   });
@@ -46,20 +46,36 @@ $(function(){
     }
   }
 
-  function moveTo($piece, $space){
-      // TODO: Move the rook along with the king, when castling
+  function moveTo($piece, $space, shouldSkipValidation){
     // Only allow movement to a valid space
-    if($space.attr('data-validmove') !== 'possible'){
+    if(!shouldSkipValidation && $space.attr('data-validmove') !== 'possible'){
       return false;
     }
-    var moveNumber = $piece.attr('hasmoved') || 0;
-    $piece.attr('hasmoved', moveNumber + 1);
+    var moveNumber = $piece.attr('data-hasmoved') || 0;
+    $piece.attr('data-hasmoved', moveNumber + 1);
     $space.append($piece);
     $lastPieceMoved = $piece;
     resetValidMoves();
+    castleIfNecessary($piece);
     promoteIfNecessary($piece);
     switchPlayer();
     return true;
+  }
+
+  function castleIfNecessary($piece){
+    // If the piece is a king, on it's first move, next to a Castle
+    if($piece.attr('data-piece') === 'king' && $piece.attr('data-hasmoved') === '1'){
+      var $leftRook = spaceRelativeTo($piece, -2, 0).find(".piece[data-piece='rook'][data-player='"+currentPlayer+"']");
+      if(!!$leftRook.length && hasNotMoved($leftRook)){
+        moveTo($leftRook, spaceRelativeTo($leftRook, 3, 0), true);
+        switchPlayer(); // To reverse the automatic player switching on moves.
+      }
+      var $rightRook = spaceRelativeTo($piece, 1, 0).find(".piece[data-piece='rook'][data-player='"+currentPlayer+"']");
+      if(!!$rightRook.length && hasNotMoved($rightRook)){
+        moveTo($rightRook, spaceRelativeTo($rightRook, -2, 0), true);
+        switchPlayer(); // To reverse the automatic player switching on moves.
+      }
+    }
   }
 
   function promoteIfNecessary($piece){
@@ -137,7 +153,7 @@ $(function(){
   }
 
   var hasNotMoved = function($piece){
-    return !($piece.attr('hasmoved') >= 1)
+    return !($piece.attr('data-hasmoved') >= 1)
   }
 
   var isEnemySpace = function($space){
@@ -155,7 +171,7 @@ $(function(){
   var isEnemyPawnThatHasMovedOnce = function($space){
     var $pawn = $space.find(".piece[data-piece='pawn'][data-player='"+enemyPlayer()+"']");
     var justMoved = $pawn.is($lastPieceMoved);
-    var wasFirstMove = $pawn.attr('hasmoved') === "1";
+    var wasFirstMove = $pawn.attr('data-hasmoved') === "1";
     return !!$pawn && justMoved && wasFirstMove;
   }
 
@@ -233,9 +249,9 @@ $(function(){
       markMoveValidIf(spaceRelativeTo($king, 2, 0), isUnoccupied);
     }
     var $rook = spaceRelativeTo($king, -4, 0).find(".piece[data-piece='rook']");
-    var inBetweenSpaces = [spaceRelativeTo($king, -1, 0) , spaceRelativeTo($king, -2, 0) , spaceRelativeTo($king, -3, 0)];
+    var inBetweenSpaces = [spaceRelativeTo($king, -1, 0) , spaceRelativeTo($king, -2, 0) , spaceRelativeTo($king, -2, 0)];
     if(hasNotMoved($king) && hasNotMoved($rook) && _.all(inBetweenSpaces, isUnoccupied)){
-      markMoveValidIf(spaceRelativeTo($king, -3, 0), isUnoccupied);
+      markMoveValidIf(spaceRelativeTo($king, -2, 0), isUnoccupied);
     }
   }
 
