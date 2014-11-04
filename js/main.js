@@ -6,8 +6,7 @@ $(function(){
   var $captureBox = $("#captured");
   var $pieceChooser = $('#piece-promotion');
   var $lastPieceMoved;
-  // TODO: Rename this:
-  var $selected_piece;
+  var $selectedPiece;
 
   // Chess Set Picker
   // TODO: Remember the choosen chess set ;)
@@ -24,19 +23,19 @@ $(function(){
   });
 
   $spaces.on('click', function(){
-    if(!$selected_piece){
+    if(!$selectedPiece){
       return;
     }
     var $space = $(this);
-    moveTo($selected_piece, $space);
-    $selected_piece = null;
+    moveTo($selectedPiece, $space);
+    $selectedPiece = null;
   });
 
   function capture($piece){
-    if(!$selected_piece || $selected_piece === $piece){
+    if(!$selectedPiece || $selectedPiece === $piece){
       return false;
     }
-    if(moveTo($selected_piece, $piece.closest('td'))){
+    if(moveTo($selectedPiece, $piece.closest('td'))){
       // TODO: Move the rook along with the king, when castling
       $piece.off('click');
       $captureBox.append($piece);
@@ -79,17 +78,17 @@ $(function(){
 
   function select($piece){
     resetValidMoves();
-    $selected_piece = $piece;
+    $selectedPiece = $piece;
     showValidMovesFor($piece);
     $piece.addClass('selected');
   }
 
   function resetValidMoves(){
     // Reset previous valid moves.
-    if(!!$selected_piece){
-      $selected_piece.removeClass('selected');
+    if(!!$selectedPiece){
+      $selectedPiece.removeClass('selected');
     }
-    $selected_piece = null;
+    $selectedPiece = null;
     $spaces.attr('data-validmove', 'no');
     $spaces.removeClass('possible impossible');
   }
