@@ -33,11 +33,11 @@ $(function(){
     $selectedPiece = null;
   });
 
-  function capture($piece){
+  function capture($piece, shouldSkipValidation){
     if(!$selectedPiece || $selectedPiece === $piece){
       return false;
     }
-    if(moveTo($selectedPiece, $piece.closest('td'))){
+    if(moveTo($selectedPiece, $piece.closest('td'), shouldSkipValidation)){
       $piece.off('click');
       $captureBox.append($piece);
       return true;
@@ -52,10 +52,11 @@ $(function(){
       return false;
     }
     var moveNumber = $piece.attr('data-hasmoved') || 0;
-    $piece.attr('data-hasmoved', moveNumber + 1);
+    $piece.attr('data-hasmoved', 1 + moveNumber);
     $space.append($piece);
     $lastPieceMoved = $piece;
     resetValidMoves();
+    captureEnPassantIfNecessary($piece, $space);
     castleIfNecessary($piece);
     promoteIfNecessary($piece);
     switchPlayer();
@@ -74,6 +75,18 @@ $(function(){
       if(!!$rightRook.length && hasNotMoved($rightRook)){
         moveTo($rightRook, spaceRelativeTo($rightRook, -2, 0), true);
         switchPlayer(); // To reverse the automatic player switching on moves.
+      }
+    }
+  }
+
+  function captureEnPassantIfNecessary($piece, $space){
+    // If the piece is a pawn, with a pawn to the left of it that has only moved once
+    if($piece.attr('data-piece') === 'pawn' && !!spaceRelativeTo($piece, 0, 3)){
+      var $pawn = spaceRelativeTo($piece, 0, -1).find(".piece[data-piece='pawn'][data-player='"+enemyPlayer()+"']");
+      if(!!$pawn && $pawn.attr("data-hasmoved") === "1"){
+        $selectedPiece = $piece;
+        capture($pawn, true);
+        moveTo($piece, $space, true);
       }
     }
   }
@@ -304,9 +317,9 @@ $(function(){
     _.each(valid_combinations, function(combination){
       var x = combination[0];
       var y = combination[1];
-      // TODO: This falsely allows the capture of pawns that moved one space,
-      // when it should only work for pawns that moved two spaces.
-      markMoveValidIf(spaceRelativeTo($pawn, x, y), isEnemyPawnThatHasMovedOnce);
+      if(isEnemyPawnThatHasMovedOnce(spaceRelativeTo($pawn, x, y)) && !!spaceRelativeTo($pawn, 0, 3)[0]){
+        markMoveValidIf(spaceRelativeTo($pawn, x, 1), isUnoccupied);
+      }
     });
   }
 
