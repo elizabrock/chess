@@ -11,14 +11,17 @@ $(function(){
   var $selectedPiece;
   var $spaces = $("table#chess td");
 
-  // Chess Set Picker
+  //
+  // Event Handlers:
+  //
+
   // TODO: (In Class) Remember the chosen chess set ;)
   $("#set-picker").on('change', function(){
     $spaces.css('font-family', this.value);
   });
 
   $('.piece').on('click', function(event){
-    // Prevent triggering the click handler for moving a piece:
+    // Prevent triggering the $spaces click handler:
     event.stopPropagation();
     var $this_piece = $(this);
     capture($this_piece) || select($this_piece);
@@ -32,6 +35,10 @@ $(function(){
     moveTo($selectedPiece, $space);
     $selectedPiece = null;
   });
+
+  //
+  // Basic Actions:
+  //
 
   function capture($piece, shouldSkipValidation){
     if(!$selectedPiece || $selectedPiece === $piece){
@@ -62,6 +69,24 @@ $(function(){
     switchPlayer();
     return true;
   }
+
+  function select($piece){
+    if(currentPlayer === $piece.attr('data-player')){
+      resetValidMoves();
+      $selectedPiece = $piece;
+      showValidMovesFor($piece);
+      $piece.addClass('selected');
+    }
+  }
+
+  function switchPlayer(){
+    currentPlayer = (currentPlayer === 'white') ? 'black' : 'white';
+    $currentPlayerSpan.text(currentPlayer);
+  }
+
+  //
+  // Special Rules:
+  //
 
   function castleIfNecessary($piece){
     // If the piece is a king, on it's first move, next to a Castle
@@ -108,19 +133,9 @@ $(function(){
     }
   }
 
-  function select($piece){
-    if(currentPlayer === $piece.attr('data-player')){
-      resetValidMoves();
-      $selectedPiece = $piece;
-      showValidMovesFor($piece);
-      $piece.addClass('selected');
-    }
-  }
-
-  function switchPlayer(){
-    currentPlayer = (currentPlayer === 'white') ? 'black' : 'white';
-    $currentPlayerSpan.text(currentPlayer);
-  }
+  //
+  // Movement Validation:
+  //
 
   function resetValidMoves(){
     // Reset previous valid moves.
@@ -155,6 +170,10 @@ $(function(){
         break;
     }
   }
+
+  //
+  // Movement Validation Helpers:
+  //
 
   var cannotMovePast = function($space, $piece){
     var pieceInPlay = $space.find(".piece").length;
@@ -334,6 +353,10 @@ $(function(){
       $space.addClass('impossible');
     }
   }
+
+  //
+  // Dom Traversal:
+  //
 
   function spaceRelativeTo($piece, forwardx, forwardy){
     // Eliza's Movement Traversal Philosophy:
