@@ -149,26 +149,28 @@ $(function(){
 
   function showValidMovesFor($piece){
     // Apply the appropriate rules to determine valid moves:
+    var validMoves;
     switch($piece.attr('data-piece')){
       case 'queen':
-        showQueenMoves($piece);
+        validMoves = movesForQueen($piece);
         break;
       case 'king':
-        showKingMoves($piece);
+        validMoves = movesForKing($piece);
         break;
       case 'rook':
-        showRookMoves($piece);
+        validMoves = movesForRook($piece);
         break;
       case 'bishop':
-        showBishopMoves($piece);
+        validMoves = movesForBishop($piece);
         break;
       case 'knight':
-        showKnightMoves($piece);
+        validMoves = movesForKnight($piece);
         break;
       case 'pawn':
-        showPawnMoves($piece);
+        validMoves = movesForPawn($piece);
         break;
     }
+    markSpacesValid(validMoves);
   }
 
   //
@@ -209,149 +211,184 @@ $(function(){
 
   var maximum_move_distances = [1, 2, 3, 4, 5, 6, 7, 8];
 
-  function showCardinalMoves($piece){
+  function cardinalMoves($piece){
+    var validMoves = [];
     _.find(maximum_move_distances, function(x){
       var $space = spaceRelativeTo($piece, x, 0);
-      markMoveValidIf($space, isNotMyPiece);
+      if(isNotMyPiece($space)){
+        validMoves.push($space);
+      }
       return cannotMovePast($space);
     });
     _.find(maximum_move_distances, function(x){
       var $space = spaceRelativeTo($piece, -x, 0);
-      markMoveValidIf($space, isNotMyPiece);
+      if(isNotMyPiece($space)){
+        validMoves.push($space);
+      }
       return cannotMovePast($space);
     });
     _.find(maximum_move_distances, function(y){
       var $space = spaceRelativeTo($piece, 0, y);
-      markMoveValidIf($space, isNotMyPiece);
+      if(isNotMyPiece($space)){
+        validMoves.push($space);
+      }
       return cannotMovePast($space);
     });
     _.find(maximum_move_distances, function(y){
       var $space = spaceRelativeTo($piece, 0, -y);
-      markMoveValidIf($space, isNotMyPiece);
+      if(isNotMyPiece($space)){
+        validMoves.push($space);
+      }
       return cannotMovePast($space);
     });
+    return validMoves;
   }
 
-  function showDiagonalMoves($piece){
+  function diagonalMoves($piece){
+    var validMoves = [];
     _.find(maximum_move_distances, function(distance){
       var $space = spaceRelativeTo($piece, -distance, distance);
-      markMoveValidIf($space, isNotMyPiece);
+      if(isNotMyPiece($space)){
+        validMoves.push($space);
+      }
       return cannotMovePast($space);
     });
     _.find(maximum_move_distances, function(distance){
       var $space = spaceRelativeTo($piece, -distance, -distance);
-      markMoveValidIf($space, isNotMyPiece);
+      if(isNotMyPiece($space)){
+        validMoves.push($space);
+      }
       return cannotMovePast($space);
     });
     _.find(maximum_move_distances, function(distance){
       var $space = spaceRelativeTo($piece, distance, distance);
-      markMoveValidIf($space, isNotMyPiece);
+      if(isNotMyPiece($space)){
+        validMoves.push($space);
+      }
       return cannotMovePast($space);
     });
     _.find(maximum_move_distances, function(distance){
       var $space = spaceRelativeTo($piece, distance, -distance);
-      markMoveValidIf($space, isNotMyPiece);
+      if(isNotMyPiece($space)){
+        validMoves.push($space);
+      }
       return cannotMovePast($space);
     });
+    return validMoves;
   }
 
-  function showQueenMoves($queen){
+  function movesForQueen($queen){
     // Can move any number of spaces in any direction
-    showCardinalMoves($queen);
-    showDiagonalMoves($queen);
+    return cardinalMoves($queen).concat(diagonalMoves($queen));
   }
 
-  function showKingMoves($king){
+  function movesForKing($king){
+    var validMoves = [];
     // Can move one space in any direction
-    valid_combinations = [
+    validCombinations = [
       [-1, 1],  [0, 1],  [1, 1],
       [-1, 0],           [1, 0],
       [-1, -1], [0, -1], [1, -1]];
-    _.each(valid_combinations, function(combination){
+    _.each(validCombinations, function(combination){
       var x = combination[0];
       var y = combination[1];
-      markMoveValidIf(spaceRelativeTo($king, x, y), isNotMyPiece);
+      var $piece = spaceRelativeTo($king, x, y);
+      if(isNotMyPiece($piece)){
+        validMoves.push($piece);
+      }
     });
     // Castling
     // TODO: The King can't pass through a square that is under attack.
     // TODO: The king may not castle into check, out of check, or through check.
     var $rook = spaceRelativeTo($king, 3, 0).find(".piece[data-piece='rook']");
-    var inBetweenSpaces = [spaceRelativeTo($king, 1, 0) , spaceRelativeTo($king, 2, 0)];
+    var $castleSpace = spaceRelativeTo($king, 2, 0);
+    var inBetweenSpaces = [spaceRelativeTo($king, 1, 0), $castleSpace];
     if(hasNotMoved($king) && hasNotMoved($rook) && _.all(inBetweenSpaces, isUnoccupied)){
-      markMoveValidIf(spaceRelativeTo($king, 2, 0), isUnoccupied);
+      validMoves.push($castleSpace);
     }
+
     var $rook = spaceRelativeTo($king, -4, 0).find(".piece[data-piece='rook']");
-    var inBetweenSpaces = [spaceRelativeTo($king, -1, 0) , spaceRelativeTo($king, -2, 0) , spaceRelativeTo($king, -2, 0)];
+    var $castleSpace = spaceRelativeTo($king, -2, 0);
+    var inBetweenSpaces = [spaceRelativeTo($king, -1, 0), $castleSpace, spaceRelativeTo($king, -2, 0)];
     if(hasNotMoved($king) && hasNotMoved($rook) && _.all(inBetweenSpaces, isUnoccupied)){
-      markMoveValidIf(spaceRelativeTo($king, -2, 0), isUnoccupied);
+      validMoves.push($castleSpace);
     }
+    return validMoves;
   }
 
-  function showRookMoves($rook){
+  function movesForRook($rook){
     // Can move any number of spaces in the cardinal directions
-    showCardinalMoves($rook);
+    return cardinalMoves($rook);
   }
 
-  function showBishopMoves($bishop){
+  function movesForBishop($bishop){
     // Can move any number of spaces in the diagonal directions
-    showDiagonalMoves($bishop);
+    return diagonalMoves($bishop);
   }
 
-  function showKnightMoves($knight){
+  function movesForKnight($knight){
     // Can move to any square that is either two spaces x and one space y away, or is one space x away and two spaces away
-    valid_combinations = [
-      [-2, -1], [-2, 1],
-      [-1, -2], [-1, 2],
-      [1, -2],  [1, 2],
-      [2, -1],  [2, 1]
+    var possibleCombinations = [
+      spaceRelativeTo($knight, -2, -1),
+      spaceRelativeTo($knight, -2,  1),
+      spaceRelativeTo($knight, -1, -2),
+      spaceRelativeTo($knight, -1,  2),
+      spaceRelativeTo($knight,  1, -2),
+      spaceRelativeTo($knight,  1,  2),
+      spaceRelativeTo($knight,  2, -1),
+      spaceRelativeTo($knight,  2,  1)
     ];
-    _.each(valid_combinations, function(combination){
-      var x = combination[0];
-      var y = combination[1];
-      markMoveValidIf(spaceRelativeTo($knight, x, y), isNotMyPiece);
+    return _.filter(possibleCombinations, function($space){
+      return isNotMyPiece($space);
     });
   }
 
-  function showPawnMoves($pawn){
+  function movesForPawn($pawn){
+    var validMoves = [];
+
     // Can move one square forward, to an unoccupied square
-    var oneSpaceForward = spaceRelativeTo($pawn, 0, 1);
-    markMoveValidIf(oneSpaceForward, isUnoccupied);
-    // On the first move only, the pawn can move two squares forward, if both are unoccupied
-    if(hasNotMoved($pawn) && isUnoccupied(oneSpaceForward)){
-      markMoveValidIf(spaceRelativeTo($pawn, 0, 2), isUnoccupied);
+    var $oneSpaceForward = spaceRelativeTo($pawn, 0, 1);
+    if(isUnoccupied($oneSpaceForward)){
+      validMoves.push($oneSpaceForward);
     }
+
+    // On the first move only, the pawn can move two squares forward, if both are unoccupied
+    var $twoSpacesForward = spaceRelativeTo($pawn, 0, 2);
+    if(hasNotMoved($pawn) && isUnoccupied($oneSpaceForward) && isUnoccupied($twoSpacesForward)){
+      validMoves.push($twoSpacesForward);
+    }
+
     // Pawns capture forward diagonally
-    valid_combinations = [[-1, 1], [1, 1]];
-    _.each(valid_combinations, function(combination){
+    validCombinations = [[-1, 1], [1, 1]];
+    _.each(validCombinations, function(combination){
       var x = combination[0];
       var y = combination[1];
       var $space = spaceRelativeTo($pawn, x, y);
       if(isEnemySpace($space)){
-        markMoveValidIf(spaceRelativeTo($pawn, x, y), isEnemySpace);
+        validMoves.push($space);
       }
     });
 
     // En passant
-    valid_combinations = [[-1, 0], [1, 0]];
-    _.each(valid_combinations, function(combination){
+    validCombinations = [[-1, 0], [1, 0]];
+    _.each(validCombinations, function(combination){
       var x = combination[0];
       var y = combination[1];
-      if(isEnemyPawnThatHasMovedOnce(spaceRelativeTo($pawn, x, y)) && !!spaceRelativeTo($pawn, 0, 3)[0]){
-        markMoveValidIf(spaceRelativeTo($pawn, x, 1), isUnoccupied);
+      var eligibleEnPassantSpace = !!spaceRelativeTo($pawn, 0, 3)[0];
+      var enemyPawnPassed = isEnemyPawnThatHasMovedOnce(spaceRelativeTo($pawn, x, y));
+      var $passantSpace = spaceRelativeTo($pawn, x, 1);
+      if(eligibleEnPassantSpace && enemyPawnPassed && isUnoccupied($passantSpace)){
+        validMoves.push($passantSpace);
       }
     });
+    return validMoves;
   }
 
-  // Calling this predicateFunction is redundant,
-  // but I want to be super clear about what this is.
-  function markMoveValidIf($space, predicateFunction){
-    if(predicateFunction($space)){
-      $space.attr('data-validmove', 'possible');
-      $space.addClass('possible');
-    } else {
-      $space.attr('data-validmove', 'impossible');
-      $space.addClass('impossible');
-    }
+  function markSpacesValid(spaces){
+    spaces.forEach(function(space){
+      space.attr('data-validmove', 'possible');
+      space.addClass('possible');
+    });
   }
 
   //
