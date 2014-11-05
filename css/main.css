@@ -86,6 +86,10 @@ table#chess td.possible {
   color: black;
 }
 
+.piece[data-piece='king'][data-checked='true']:after {
+  color: red;
+}
+
 .piece:after {
   display: block;
   width: 54px;

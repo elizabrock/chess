@@ -66,15 +66,16 @@ $(function(){
     captureEnPassantIfNecessary($piece, $space);
     castleIfNecessary($piece);
     promoteIfNecessary($piece);
+    checkForCheck();
     switchPlayer();
     return true;
   }
 
   function select($piece){
-    if(currentPlayer === $piece.attr('data-player')){
+    if(currentPlayer === player($piece)){
       resetValidMoves();
       $selectedPiece = $piece;
-      showValidMovesFor($piece);
+      markSpacesValid(validMovesFor($piece));
       $piece.addClass('selected');
     }
   }
@@ -107,13 +108,27 @@ $(function(){
   function captureEnPassantIfNecessary($piece, $space){
     // If the piece is a pawn, with a pawn to the left of it that has only moved once
     if($piece.attr('data-piece') === 'pawn' && !!spaceRelativeTo($piece, 0, 3)){
-      var $pawn = spaceRelativeTo($piece, 0, -1).find(".piece[data-piece='pawn'][data-player='"+enemyPlayer()+"']");
+      var $pawn = spaceRelativeTo($piece, 0, -1).find(".piece[data-piece='pawn'][data-player='"+enemy(player($piece))+"']");
       if(!!$pawn && $pawn.attr("data-hasmoved") === "1"){
         $selectedPiece = $piece;
         capture($pawn, true);
         moveTo($piece, $space, true);
       }
     }
+  }
+
+  function checkForCheck(){
+    var $kings = $("table .piece[data-piece='king']");
+    $kings.attr('data-checked', 'false');
+    var $piecesInPlay = $("table .piece");
+    $kings.each(function(index, king){
+      var $king = $(king);
+      if( _.any($piecesInPlay, function(piece){ return canCapture($(piece), $king) })){
+        $king.attr('data-checked', 'true');
+        return true;
+      }
+    });
+    return false;
   }
 
   function promoteIfNecessary($piece){
@@ -147,7 +162,7 @@ $(function(){
     $spaces.removeClass('possible impossible');
   }
 
-  function showValidMovesFor($piece){
+  function validMovesFor($piece){
     // Apply the appropriate rules to determine valid moves:
     var validMoves;
     switch($piece.attr('data-piece')){
@@ -170,40 +185,52 @@ $(function(){
         validMoves = movesForPawn($piece);
         break;
     }
-    markSpacesValid(validMoves);
+    return validMoves;
   }
 
   //
   // Movement Validation Helpers:
   //
 
+  var canCapture = function($piece, $victim){
+    var $victimSpace = $victim.closest('td');
+    var validMoves = validMovesFor($piece);
+    return _.any(validMoves, function($space){
+      return $space.is($victimSpace);
+    });
+  }
+
   var cannotMovePast = function($space, $piece){
     var pieceInPlay = $space.find(".piece").length;
     return !!pieceInPlay;
   }
 
-  function enemyPlayer(){
-    return (currentPlayer === 'white')? 'black' : 'white';
+  function enemy(ofPlayer){
+    return (ofPlayer === 'white')? 'black' : 'white';
+  }
+
+  function player($piece){
+    return $piece.attr('data-player');
   }
 
   var hasNotMoved = function($piece){
     return !($piece.attr('data-hasmoved') >= 1)
   }
 
-  var isEnemySpace = function($space){
-    return !!$space.find(".piece[data-player='"+enemyPlayer()+"']").length;
+  var isEnemySpace = function($space, player){
+    return !!$space.find(".piece[data-player='"+enemy(player)+"']").length;
   }
 
   var isUnoccupied = function($space){
     return !$space.find('.piece').length;
   }
 
-  var isNotMyPiece = function($space){
-    return !$space.find(".piece[data-player='"+currentPlayer+"']").length;
+  var isNotMyPiece = function($space, player){
+    return !$space.find(".piece[data-player='" + player + "']").length;
   }
 
-  var isEnemyPawnThatHasMovedOnce = function($space){
-    var $pawn = $space.find(".piece[data-piece='pawn'][data-player='"+enemyPlayer()+"']");
+  var isEnemyPawnThatHasMovedOnce = function($space, player){
+    var $pawn = $space.find(".piece[data-piece='pawn'][data-player='"+enemy(player)+"']");
     var justMoved = $pawn.is($lastPieceMoved);
     var wasFirstMove = $pawn.attr('data-hasmoved') === "1";
     return !!$pawn && justMoved && wasFirstMove;
@@ -213,30 +240,30 @@ $(function(){
 
   function cardinalMoves($piece){
     var validMoves = [];
-    _.find(maximum_move_distances, function(x){
+    _.detect(maximum_move_distances, function(x){
       var $space = spaceRelativeTo($piece, x, 0);
-      if(isNotMyPiece($space)){
+      if(isNotMyPiece($space, player($piece))){
         validMoves.push($space);
       }
       return cannotMovePast($space);
     });
-    _.find(maximum_move_distances, function(x){
+    _.detect(maximum_move_distances, function(x){
       var $space = spaceRelativeTo($piece, -x, 0);
-      if(isNotMyPiece($space)){
+      if(isNotMyPiece($space, player($piece))){
         validMoves.push($space);
       }
       return cannotMovePast($space);
     });
-    _.find(maximum_move_distances, function(y){
+    _.detect(maximum_move_distances, function(y){
       var $space = spaceRelativeTo($piece, 0, y);
-      if(isNotMyPiece($space)){
+      if(isNotMyPiece($space, player($piece))){
         validMoves.push($space);
       }
       return cannotMovePast($space);
     });
-    _.find(maximum_move_distances, function(y){
+    _.detect(maximum_move_distances, function(y){
       var $space = spaceRelativeTo($piece, 0, -y);
-      if(isNotMyPiece($space)){
+      if(isNotMyPiece($space, player($piece))){
         validMoves.push($space);
       }
       return cannotMovePast($space);
@@ -246,30 +273,30 @@ $(function(){
 
   function diagonalMoves($piece){
     var validMoves = [];
-    _.find(maximum_move_distances, function(distance){
+    _.detect(maximum_move_distances, function(distance){
       var $space = spaceRelativeTo($piece, -distance, distance);
-      if(isNotMyPiece($space)){
+      if(isNotMyPiece($space, player($piece))){
         validMoves.push($space);
       }
       return cannotMovePast($space);
     });
-    _.find(maximum_move_distances, function(distance){
+    _.detect(maximum_move_distances, function(distance){
       var $space = spaceRelativeTo($piece, -distance, -distance);
-      if(isNotMyPiece($space)){
+      if(isNotMyPiece($space, player($piece))){
         validMoves.push($space);
       }
       return cannotMovePast($space);
     });
-    _.find(maximum_move_distances, function(distance){
+    _.detect(maximum_move_distances, function(distance){
       var $space = spaceRelativeTo($piece, distance, distance);
-      if(isNotMyPiece($space)){
+      if(isNotMyPiece($space, player($piece))){
         validMoves.push($space);
       }
       return cannotMovePast($space);
     });
-    _.find(maximum_move_distances, function(distance){
+    _.detect(maximum_move_distances, function(distance){
       var $space = spaceRelativeTo($piece, distance, -distance);
-      if(isNotMyPiece($space)){
+      if(isNotMyPiece($space, player($piece))){
         validMoves.push($space);
       }
       return cannotMovePast($space);
@@ -293,7 +320,7 @@ $(function(){
       var x = combination[0];
       var y = combination[1];
       var $piece = spaceRelativeTo($king, x, y);
-      if(isNotMyPiece($piece)){
+      if(isNotMyPiece($piece, player($king))){
         validMoves.push($piece);
       }
     });
@@ -339,7 +366,7 @@ $(function(){
       spaceRelativeTo($knight,  2,  1)
     ];
     return _.filter(possibleCombinations, function($space){
-      return isNotMyPiece($space);
+      return isNotMyPiece($space, player($knight));
     });
   }
 
@@ -364,7 +391,7 @@ $(function(){
       var x = combination[0];
       var y = combination[1];
       var $space = spaceRelativeTo($pawn, x, y);
-      if(isEnemySpace($space)){
+      if(isEnemySpace($space, player($pawn))){
         validMoves.push($space);
       }
     });
@@ -375,7 +402,7 @@ $(function(){
       var x = combination[0];
       var y = combination[1];
       var eligibleEnPassantSpace = !!spaceRelativeTo($pawn, 0, 3)[0];
-      var enemyPawnPassed = isEnemyPawnThatHasMovedOnce(spaceRelativeTo($pawn, x, y));
+      var enemyPawnPassed = isEnemyPawnThatHasMovedOnce(spaceRelativeTo($pawn, x, y), player($pawn));
       var $passantSpace = spaceRelativeTo($pawn, x, 1);
       if(eligibleEnPassantSpace && enemyPawnPassed && isUnoccupied($passantSpace)){
         validMoves.push($passantSpace);
@@ -410,7 +437,7 @@ $(function(){
     var y = forwardy;
 
     // if piece is black, reverse the x and y to match reality
-    if($piece.data('player') === 'black'){
+    if(player($piece) === 'black'){
       x = -1 * x;
       y = -1 * y;
     }
