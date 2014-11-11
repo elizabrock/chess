@@ -4,20 +4,33 @@ $(function(){
   // TODO: (In Class) Animate piece movement
 
   var currentPlayer = 'white';
-  var $captureBox = $("#captured");
+  var $captureBox = $("#captured-pieces");
   var $currentPlayerSpan = $("#current-player");
   var $lastPieceMoved;
   var $pieceChooser = $('#piece-promotion');
   var $selectedPiece;
   var $spaces = $("table#chess td");
 
+  function setChessSet(chosenSet){
+    $spaces.css('font-family', chosenSet);
+    $captureBox.css('font-family', chosenSet);
+    $pieceChooser.css('font-family', chosenSet);
+  }
+
+  if(docCookies.hasItem('chess-set')){
+    var chosenSet = docCookies.getItem('chess-set');
+    setChessSet(chosenSet);
+    $("#set-picker").val(chosenSet);
+  }
+
   //
   // Event Handlers:
   //
 
-  // TODO: (In Class) Remember the chosen chess set ;)
   $("#set-picker").on('change', function(){
-    $spaces.css('font-family', this.value);
+    var chosenSet = this.value;
+    setChessSet(chosenSet);
+    docCookies.setItem('chess-set', chosenSet);
   });
 
   $('.piece').on('click', function(event){
