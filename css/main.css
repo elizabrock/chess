@@ -66,8 +66,8 @@ table#chess td {
 }
 
 table#chess td, table#chess th {
-  width: 54px;
-  height: 54px;
+  width: 60px;
+  height: 60px;
   line-height: 48px;
   text-align: center;
 }
@@ -84,35 +84,38 @@ table#chess td.possible {
 
 .piece {
   color: black;
+  display: block;
+  width: 48px;
+  height: 48px;
 }
 
-.piece[data-piece='king'][data-checked='true']:after {
+.piece[data-piece='king'][data-checked='true']:before {
   color: red;
 }
 
-.piece:after {
+.piece:before {
   display: block;
   width: 54px;
   height: 54px;
 }
 
-.piece.selected:after {
+.piece.selected:before {
   display: block;
   text-shadow: rgba(0, 0, 128, 0.8) 0em 0em 0.1em;
 }
 
 /* http://chess.stackexchange.com/q/6272/4152            */
 /* http://en.wikipedia.org/wiki/Chess_symbols_in_Unicode */
-*[data-player='white'][data-piece='king']:after  { content: '\2654'; }
-*[data-player='white'][data-piece='queen']:after   { content: '\2655'; }
-*[data-player='white'][data-piece='rook']:after   { content: '\2656'; }
-*[data-player='white'][data-piece='bishop']:after { content: '\2657'; }
-*[data-player='white'][data-piece='knight']:after { content: '\2658'; }
-*[data-player='white'][data-piece='pawn']:after   { content: '\2659'; }
+*[data-player='white'][data-piece='king']:before  { content: '\2654'; }
+*[data-player='white'][data-piece='queen']:before   { content: '\2655'; }
+*[data-player='white'][data-piece='rook']:before   { content: '\2656'; }
+*[data-player='white'][data-piece='bishop']:before { content: '\2657'; }
+*[data-player='white'][data-piece='knight']:before { content: '\2658'; }
+*[data-player='white'][data-piece='pawn']:before   { content: '\2659'; }
 
-*[data-player='black'][data-piece='king']:after  { content: '\265A'; }
-*[data-player='black'][data-piece='queen']:after   { content: '\265B'; }
-*[data-player='black'][data-piece='rook']:after   { content: '\265C'; }
-*[data-player='black'][data-piece='bishop']:after { content: '\265D'; }
-*[data-player='black'][data-piece='knight']:after { content: '\265E'; }
-*[data-player='black'][data-piece='pawn']:after   { content: '\265F'; }
+*[data-player='black'][data-piece='king']:before  { content: '\265A'; }
+*[data-player='black'][data-piece='queen']:before   { content: '\265B'; }
+*[data-player='black'][data-piece='rook']:before   { content: '\265C'; }
+*[data-player='black'][data-piece='bishop']:before { content: '\265D'; }
+*[data-player='black'][data-piece='knight']:before { content: '\265E'; }
+*[data-player='black'][data-piece='pawn']:before   { content: '\265F'; }

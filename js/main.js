@@ -33,20 +33,46 @@ $(function(){
     docCookies.setItem('chess-set', chosenSet);
   });
 
+  $('.piece').draggable({
+    revert: true,
+    containment: "table",
+    start: function(event, ui){
+      console.log('drag start');
+      select($(this));
+    }
+  });
+
   $('.piece').on('click', function(event){
-    // Prevent triggering the $spaces click handler:
-    event.stopPropagation();
-    var $this_piece = $(this);
-    capture($this_piece) || select($this_piece);
+      console.log('piece clicked');
+      // Prevent triggering the $spaces click handler:
+      event.stopPropagation();
+      var $this_piece = $(this);
+      capture($this_piece) || select($this_piece);
+  });
+
+  $('.piece').droppable({
+    drop: function(event, ui){
+      console.log("dropped onto piece");
+      capture($(this));
+    }
+  });
+
+  $spaces.droppable({
+    drop: function(event, ui){
+      console.log("dropped onto space");
+      var $space = $(this);
+      var $piece = $(this).find('.piece');
+      capture($piece) || moveTo($selectedPiece, $space);
+    }
   });
 
   $spaces.on('click', function(){
+    console.log("space click");
     if(!$selectedPiece){
       return;
     }
     var $space = $(this);
     moveTo($selectedPiece, $space);
-    $selectedPiece = null;
   });
 
   //
@@ -54,7 +80,9 @@ $(function(){
   //
 
   function capture($piece, shouldSkipValidation){
-    if(!$selectedPiece || $selectedPiece === $piece){
+    console.log("capture");
+    if(!$piece || !$selectedPiece || $selectedPiece === $piece){
+      console.log("Escapee!");
       return false;
     }
     if(moveTo($selectedPiece, $piece.closest('td'), shouldSkipValidation)){
@@ -67,13 +95,15 @@ $(function(){
   }
 
   function moveTo($piece, $space, shouldSkipValidation){
-    // Only allow movement to a valid space
+    // // Only allow movement to a valid space
+    console.log("moveTo");
     if(!shouldSkipValidation && $space.attr('data-validmove') !== 'possible'){
       return false;
     }
     var moveNumber = $piece.attr('data-hasmoved') || 0;
     $piece.attr('data-hasmoved', 1 + moveNumber);
     $space.append($piece);
+    $piece.css({top: 0, left: 0});
     $lastPieceMoved = $piece;
     resetValidMoves();
     captureEnPassantIfNecessary($piece, $space);
@@ -85,15 +115,17 @@ $(function(){
   }
 
   function select($piece){
+    console.log("select");
     if(currentPlayer === player($piece)){
       resetValidMoves();
       $selectedPiece = $piece;
+      $selectedPiece.addClass('selected');
       markSpacesValid(validMovesFor($piece));
-      $piece.addClass('selected');
     }
   }
 
   function switchPlayer(){
+    console.log("switchPlayer");
     currentPlayer = (currentPlayer === 'white') ? 'black' : 'white';
     $currentPlayerSpan.text(currentPlayer);
   }
